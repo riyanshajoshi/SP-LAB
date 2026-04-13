@@ -3,81 +3,67 @@
 
 #define MAX 50
 
+char files[MAX][20];
+int n = 0;
+
+// Function to search file
+int search(char fname[]) {
+    for(int i = 0; i < n; i++) {
+        if(strcmp(files[i], fname) == 0)
+            return i; // return index if found
+    }
+    return -1; // not found
+}
+
 int main() {
-    char files[MAX][20];
-    int n = 0, choice;
+    int choice;
     char fname[20];
-    int i, found;
 
     while(1) {
-        printf("\n1. Create File\n2. Delete File\n3. Search File\n4. Display Files\n5. Exit\n");
-        printf("Enter your choice: ");
+        printf("\n1.Create  2.Delete  3.Search  4.Display  5.Exit\n");
+        printf("Enter choice: ");
         scanf("%d", &choice);
 
         switch(choice) {
 
             case 1: // Create
-                if(n < MAX) {
-                    printf("Enter file name: ");
-                    scanf("%s", fname);
-
-                    // Check if file already exists
-                    found = 0;
-                    for(i = 0; i < n; i++) {
-                        if(strcmp(files[i], fname) == 0) {
-                            found = 1;
-                            break;
-                        }
-                    }
-
-                    if(found)
-                        printf("File already exists!\n");
-                    else {
-                        strcpy(files[n], fname);
-                        n++;
-                        printf("File created.\n");
-                    }
-                } else {
+                if(n == MAX) {
                     printf("Directory full!\n");
+                    break;
+                }
+
+                printf("Enter file name: ");
+                scanf("%s", fname);
+
+                if(search(fname) != -1)
+                    printf("File already exists!\n");
+                else {
+                    strcpy(files[n++], fname);
+                    printf("File created.\n");
                 }
                 break;
 
             case 2: // Delete
-                printf("Enter file name to delete: ");
+                printf("Enter file name: ");
                 scanf("%s", fname);
 
-                found = 0;
-                for(i = 0; i < n; i++) {
-                    if(strcmp(files[i], fname) == 0) {
-                        found = 1;
+                int pos = search(fname);
 
-                        // Shift files
-                        for(int j = i; j < n-1; j++) {
-                            strcpy(files[j], files[j+1]);
-                        }
-                        n--;
-                        printf("File deleted.\n");
-                        break;
-                    }
-                }
-
-                if(!found)
+                if(pos == -1) {
                     printf("File not found!\n");
+                } else {
+                    for(int i = pos; i < n-1; i++)
+                        strcpy(files[i], files[i+1]);
+                    n--;
+                    printf("File deleted.\n");
+                }
                 break;
 
             case 3: // Search
-                printf("Enter file name to search: ");
+                printf("Enter file name: ");
                 scanf("%s", fname);
 
-                found = 0;
-                for(i = 0; i < n; i++) {
-                    if(strcmp(files[i], fname) == 0) {
-                        found = 1;
-                        break;
-                    }
-                }
-
-                if(found)
+                if(search(fname) != -1)
                     printf("File found.\n");
                 else
                     printf("File not found.\n");
@@ -87,10 +73,8 @@ int main() {
                 if(n == 0)
                     printf("Directory is empty.\n");
                 else {
-                    printf("Files:\n");
-                    for(i = 0; i < n; i++) {
+                    for(int i = 0; i < n; i++)
                         printf("%s\n", files[i]);
-                    }
                 }
                 break;
 
